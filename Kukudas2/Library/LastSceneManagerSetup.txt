@@ -1,0 +1,5 @@
+sceneSetups:
+- path: Assets/OJH/01.Scenes/OJH_GroundScene.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
