@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PuppyMove : MonoBehaviour
 {
@@ -27,6 +29,12 @@ public class PuppyMove : MonoBehaviour
     //똥
     public GameObject poop;
     Transform shitmanager;
+
+    //텍스트
+    public GameObject content;
+    public GameObject infoText;
+
+
 
     public enum puppyState
     {
@@ -57,6 +65,7 @@ public class PuppyMove : MonoBehaviour
         //playerB = GameObject.Find("PlayerB").transform;
         anim = GetComponentInChildren<Animator>();
         shitmanager = GetComponentInChildren<ShitManager>().transform;
+
     }
 
     void Update()
@@ -324,14 +333,19 @@ public class PuppyMove : MonoBehaviour
     {
         GameObject poo = Instantiate(poop);
         poo.transform.position = shitmanager.transform.position;
-        Invoke("ToiletReset", 2f);
-
-       
+        //text.transform.parent = content.transform;
+        //text.GetComponent<Text>().text = "강아지가 볼일을 봤습니다. 배설물을 치우세요!";
+        //Invoke("ToiletReset", 2f);
+        ToiletReset();
     }
+
+
     void ToiletReset()
     {
         GameManager.toiletTime = 0;
     }
+
+
     void Hungry()
     {
         state = puppyState.Hungry;
