@@ -35,11 +35,11 @@ public class ArManager : MonoBehaviour
         arSesstion.SetActive(false);
         arSesstionOrigin.SetActive(false);
         TestCam.SetActive(true);
-        // All.SetActive(false);
+       
 #else
         arSesstion.SetActive(true);
         arSesstionOrigin.SetActive(true);
-        //All.SetActive(true);
+   
         TestCam.SetActive(false);
 #endif
 
