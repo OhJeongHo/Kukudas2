@@ -16,7 +16,9 @@ public class DogMove : MonoBehaviour
         Follow,
         FollowStop,
         Toilet,
-        Hungry
+        Hungry,
+        Frisbee,
+        FrisbeeBack
     }
 
     DogState state;
@@ -30,6 +32,14 @@ public class DogMove : MonoBehaviour
     public GameObject indicator;
     public GameObject ball;
     bool frisbee = false;
+    Rigidbody rb;
+    GameObject shotball;
+    public GameObject dogBall;
+    bool frisbeeActive = true;
+    bool hungryinfo = true;
+
+    public AudioSource dogBark;
+    public AudioClip dogSound;
 
     #region 야외씬 거리설정
     // Free
@@ -39,8 +49,8 @@ public class DogMove : MonoBehaviour
     float trakingDistance = 5;
     float idleDistance = 0.5f;
     // Follow
-    float stopDistance = 1f;
-    float followDistance = 3;
+    float stopDistance = 1.5f;
+    float followDistance = 2;
     // forward
     bool forwardOn = true;
     #endregion
@@ -51,7 +61,6 @@ public class DogMove : MonoBehaviour
         state = DogState.Free;
         anim = GetComponentInChildren<Animator>();
         currTime = setTime;
-        rayManager = GetComponent<ARRaycastManager>();
     }
     
     // Update is called once per frame
@@ -74,6 +83,12 @@ public class DogMove : MonoBehaviour
             case DogState.FollowStop:
                 FollowStop();
                 break;
+            case DogState.Frisbee:
+                Frisbee();
+                break;
+            case DogState.FrisbeeBack:
+                FrisbeeBack();
+                break;
             case DogState.Toilet:
                 Toilet();
                 break;
@@ -84,14 +99,32 @@ public class DogMove : MonoBehaviour
                 break;
         }
 
-        if (frisbee == true)
+        if (GameManager.hungryTime <= GameManager.hungrysetTime / 2 && hungryinfo == true)
+        {
+            GameObject text = Instantiate(infoText);
+            text.transform.parent = content.transform;
+            text.GetComponent<Text>().text = "강아지가 배고파합니다. 간식을 주세요!";
+            BarkSound();
+            hungryinfo = false;
+            
+        }
+
+        if (GameManager.hungryTime >= GameManager.hungrysetTime / 2)
+        {
+            hungryinfo = true;
+        }
+
+        if (frisbee == true && frisbeeActive == true)
         {
             Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-            List<ARRaycastHit> hits = new List<ARRaycastHit>();
-            if (rayManager.Raycast(ray, hits, TrackableType.Planes))
+
+            RaycastHit hit;
+            int layer = 1 << LayerMask.NameToLayer("Ground");
+            if (Physics.Raycast(ray, out hit, 100, layer))
             {
-                DetectedGround(hits[0].pose.position);
+                DetectedGround(hit.point);
             }
+
             else
             {
                 // 3. 바닥과 부딪히지 않는다면 Indicator를 비활성화
@@ -100,28 +133,41 @@ public class DogMove : MonoBehaviour
             // 만약에 화면 터치를 했다면 
             if (Input.GetMouseButtonDown(0))
             {
-                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) == false)
+#if UNITY_EDITOR
+                if (EventSystem.current.IsPointerOverGameObject() == false)
+#else
+            if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) == false)
+#endif
                     // 만약에 indicator가 활성화 되어있다면 
                     if (indicator.activeSelf)
                     {
                         // 인디케이터 방향으로 공이 날아가도록. 공을 추가해주고 인디케이터 방향 dir으로 이동시켜야 함.
-                        // 인스탄티에이트로 넣을 것.
-                        ball.SetActive(true);
-                        ball.transform.position = player.transform.position;
-                        Vector3 dir = indicator.transform.position - ball.transform.position;
-                        ball.transform.position += dir * 1 * Time.deltaTime;
+                        GameObject balls = Instantiate(ball);
+                        shotball = balls;
+                        balls.transform.position = Camera.main.transform.position;
+                        Vector3 dir = indicator.transform.position - balls.transform.position;
+                        dir.Normalize();
+                        balls.transform.forward = dir;
 
-                        // 강아지 프리스비 행동관련 함수 실행
-                        Frisbee();
+                        rb = balls.gameObject.GetComponent<Rigidbody>();
+                        rb.AddForce(balls.transform.forward * 500);
+
+                        // 강아지 state를 프리스비로 변경
+                        state = DogState.Frisbee;
 
                         // Indicator 비활성화
                         indicator.SetActive(false);
+                        anim.SetTrigger("Frisbee");
                         // ARManager 비활성화
-                        enabled = false;
+
                         frisbee = false;
+                        frisbeeActive = false;
                     }
+
+
             }
         }
+        
     }
 
     void Free()
@@ -132,6 +178,7 @@ public class DogMove : MonoBehaviour
         transform.forward = dir;
         transform.position += dir * 0.2f * Time.deltaTime;
         ToiletStep();
+        HungryStep();
     }
 
     void Idle()
@@ -149,6 +196,7 @@ public class DogMove : MonoBehaviour
             anim.SetTrigger("Traking");
         }
         ToiletStep();
+        HungryStep();
     }
 
     void Traking()
@@ -159,6 +207,7 @@ public class DogMove : MonoBehaviour
         dir.Normalize();
         transform.position += dir * 1 * Time.deltaTime;
         ToiletStep();
+        HungryStep();
         if (Vector3.Distance(player.position, transform.position) <= idleDistance)
         {
             state = DogState.Idle;
@@ -174,6 +223,7 @@ public class DogMove : MonoBehaviour
         dir.Normalize();
         transform.position += dir * 1 * Time.deltaTime;
         ToiletStep();
+        HungryStep();
         if (Vector3.Distance(player.position, transform.position) <= stopDistance)
         {
             state = DogState.FollowStop;
@@ -202,15 +252,37 @@ public class DogMove : MonoBehaviour
 
     void FollowStop()
     {
+        ToiletStep();
+        HungryStep();
         if (Vector3.Distance(player.position, transform.position) >= followDistance)
         {
             state = DogState.Follow;
             anim.SetTrigger("Follow");
         }
     }
+
     void Frisbee()
     {
+        Vector3 dir = new Vector3(shotball.transform.position.x - gameObject.transform.position.x, 0, shotball.transform.position.z - gameObject.transform.position.z);
+        dir.Normalize();
+        gameObject.transform.forward = dir;
+        transform.position += dir * 2 * Time.deltaTime;
         
+    }
+    void FrisbeeBack()
+    {
+        Vector3 dir = new Vector3(player.position.x - gameObject.transform.position.x, 0, player.transform.position.z - transform.position.z);
+        // Vector3 dir = player.position - gameObject.transform.position;
+        transform.forward = dir;
+        dir.Normalize();
+        transform.position += dir * 2 * Time.deltaTime;
+        if (Vector3.Distance(player.position, transform.position) <= stopDistance)
+        {
+            dogBall.SetActive(false);
+            frisbeeActive = true;
+            state = DogState.FollowStop;
+            anim.SetTrigger("FollowStop");
+        }
     }
     public void OnClickFrisbee()
     {
@@ -250,15 +322,43 @@ public class DogMove : MonoBehaviour
         state = DogState.Follow;
         anim.SetTrigger("Follow");
     }
+
+    void HungryStep()
+    {
+        if (GameManager.hungryTime <= GameManager.hungrysetTime / 4)
+        {
+            GameObject text = Instantiate(infoText);
+            text.transform.parent = content.transform;
+            text.GetComponent<Text>().text = "강아지가 너무 배고파서 움직일 수 없습니다!";
+            BarkSound();
+            state = DogState.Hungry;
+            anim.SetTrigger("Hungry");
+        }
+    }
     void Hungry()
     {
-        state = DogState.Hungry;
-        anim.SetTrigger("Hungry");
-        if (GameManager.hungryTime / GameManager.hungrysetTime <= 80f )
+        if (GameManager.hungryTime >= GameManager.hungrysetTime / 2 )
         {
             state = DogState.Free;
             anim.SetTrigger("Free");
         }
         
+    }
+
+    public void BarkSound()
+    {
+        dogBark.PlayOneShot(dogSound);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Ball")
+        {
+            // 공 오브젝트 꺼버리고, 강아지 입에 있는 공 켠다.
+            Destroy(other.gameObject);
+            dogBall.SetActive(true);
+            state = DogState.FrisbeeBack;
+            anim.SetTrigger("FrisbeeBack");
+        }
     }
 }

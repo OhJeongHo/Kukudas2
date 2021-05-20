@@ -12,6 +12,7 @@ public class ARManager : MonoBehaviour
     public GameObject testCam;
     public GameObject arSession;
     public GameObject arSessionOrigin;
+    public GameObject arground;
 
     public GameObject indicator;
     public GameObject target1, target2;
@@ -83,6 +84,7 @@ public class ARManager : MonoBehaviour
                 // dog 활성화
                 target1.SetActive(true);
                 if(target2 != null) target2.SetActive(true);
+                if (arground != null) arground.SetActive(true);
                 // 자동차의 위치를 indicator위치로, 회전값을 동일하게 해야함.
                 target1.transform.SetPositionAndRotation(indicator.transform.position, indicator.transform.rotation);
                 

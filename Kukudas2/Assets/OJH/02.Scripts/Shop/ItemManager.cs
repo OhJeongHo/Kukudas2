@@ -14,6 +14,8 @@ public class ItemManager : MonoBehaviour
     public GameObject poo;
     public GameObject content;
     public GameObject infoText;
+    public GameObject dog;
+    public GameObject heart;
 
     void Awake()
     {
@@ -61,12 +63,16 @@ public class ItemManager : MonoBehaviour
         if (cookie > 0)
         {
             cookie--;
+            GameObject hearts = Instantiate(heart);
+            hearts.transform.position = dog.transform.position;
+            ParticleSystem ps = hearts.GetComponentInChildren<ParticleSystem>();
+            ps.Play();
             print("간식먹는 애니메이션 출력");
             GameObject text = Instantiate(infoText);
             text.transform.parent = content.transform;
             GameManager.loyalty += 10;
-            GameManager.hungryTime += 10;
-            text.GetComponent<Text>().text = "쿠키를 사용했습니다. 포만감+10 충성도+10";
+            GameManager.hungryTime += 30;
+            text.GetComponent<Text>().text = "쿠키를 사용했습니다. 포만감+30 충성도+10";
         }
         else
         {

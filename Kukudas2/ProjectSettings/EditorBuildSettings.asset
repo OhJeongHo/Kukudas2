@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/OJH/01.Scenes/OJH_StartScene.unity
+    guid: 0061d8b0f987a974a9c4afeb4bc335c4
+  - enabled: 1
+    path: Assets/OJH/01.Scenes/SelectScene.unity
+    guid: f6056df573cd1e542a2d98e514a9bab0
+  - enabled: 1
     path: Assets/OJH/01.Scenes/OJH_GroundScene.unity
     guid: 190f0ab71c9a6554b9a999567066b407
   - enabled: 1
