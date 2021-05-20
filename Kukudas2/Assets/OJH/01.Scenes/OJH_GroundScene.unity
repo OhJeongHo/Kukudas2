@@ -3347,6 +3347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1217360568}
+  dog: {fileID: 479551936}
 --- !u!4 &474794499
 Transform:
   m_ObjectHideFlags: 0
@@ -5303,6 +5304,7 @@ MonoBehaviour:
   hungryUi: {fileID: 1131141913}
   toiletUi: {fileID: 1633457484}
   activityUi: {fileID: 2019674422}
+  cleanUi: {fileID: 0}
   status: {fileID: 58576784}
 --- !u!114 &852743270
 MonoBehaviour:
@@ -9856,6 +9858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1217360563}
+  dog: {fileID: 479551936}
 --- !u!64 &1917408635
 MeshCollider:
   m_ObjectHideFlags: 0

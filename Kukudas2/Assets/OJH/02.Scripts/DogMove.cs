@@ -37,6 +37,7 @@ public class DogMove : MonoBehaviour
     public GameObject dogBall;
     bool frisbeeActive = true;
     bool hungryinfo = true;
+    bool toiletinfo = true;
 
     public AudioSource dogBark;
     public AudioClip dogSound;
@@ -47,10 +48,10 @@ public class DogMove : MonoBehaviour
     float currTime = 0;
     // Idle
     float trakingDistance = 5;
-    float idleDistance = 0.5f;
+    float idleDistance = 1.5f;
     // Follow
     float stopDistance = 1.5f;
-    float followDistance = 2;
+    float followDistance = 3;
     // forward
     bool forwardOn = true;
     #endregion
@@ -150,7 +151,7 @@ public class DogMove : MonoBehaviour
                         balls.transform.forward = dir;
 
                         rb = balls.gameObject.GetComponent<Rigidbody>();
-                        rb.AddForce(balls.transform.forward * 500);
+                        rb.AddForce(balls.transform.forward * 1000);
 
                         // 강아지 state를 프리스비로 변경
                         state = DogState.Frisbee;
@@ -301,24 +302,34 @@ public class DogMove : MonoBehaviour
     {
         if (GameManager.toiletTime >= GameManager.toiletsetTime)
         {
+            GameObject poo = Instantiate(poop);
+            poo.transform.position = transform.position;
+            GameObject text = Instantiate(infoText);
+            text.transform.parent = content.transform;
+            text.GetComponent<Text>().text = "강아지가 볼일을 봤습니다. 배설물을 치우세요!";
             state = DogState.Toilet;
             anim.SetTrigger("Toilet");
         }
     }
     void Toilet()
     {
-        GameObject poo = Instantiate(poop);
-        poo.transform.position = transform.position;
-        GameObject text = Instantiate(infoText);
-        text.transform.parent = content.transform;
-        text.GetComponent<Text>().text = "강아지가 볼일을 봤습니다. 배설물을 치우세요!";
-        // Invoke("ToiletReset", 2f);
-        ToiletReset();
+        //GameObject poo = Instantiate(poop);
+        //poo.transform.position = transform.position;
+        //GameObject text = Instantiate(infoText);
+        //text.transform.parent = content.transform;
+        //text.GetComponent<Text>().text = "강아지가 볼일을 봤습니다. 배설물을 치우세요!";
+        if (toiletinfo)
+        {
+            toiletinfo = false;
+            Invoke("ToiletReset", 2f);
+        }
+        // ToiletReset();
     }
 
     void ToiletReset()
     {
         GameManager.toiletTime = 0;
+        toiletinfo = true;
         state = DogState.Follow;
         anim.SetTrigger("Follow");
     }

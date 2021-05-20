@@ -5,6 +5,7 @@ using UnityEngine;
 public class ARGroundPosition : MonoBehaviour
 {
     public GameObject player;
+    public Transform dog;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +15,6 @@ public class ARGroundPosition : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gameObject.transform.position = new Vector3(player.transform.position.x, 0, player.transform.position.z);
+        gameObject.transform.position = new Vector3(player.transform.position.x, dog.position.y, player.transform.position.z);
     }
 }
