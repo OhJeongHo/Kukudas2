@@ -37,6 +37,8 @@ public class PuppyMove : MonoBehaviour
     public AudioSource dogBark;
     public AudioClip dogSound;
 
+    bool hungryinfo = true;
+
 
 
     public enum puppyState
@@ -115,12 +117,11 @@ public class PuppyMove : MonoBehaviour
                 Hungry();
                 break;
 
-
-
             default:
                 break;
         }
 
+        
 
 
     }
@@ -138,6 +139,7 @@ public class PuppyMove : MonoBehaviour
         }
 
         ToiletStep();
+        HungryStep();
     }
 
     public void Move()
@@ -360,13 +362,26 @@ public class PuppyMove : MonoBehaviour
 
     void Hungry()
     {
-        state = puppyState.Hungry;
-        anim.SetTrigger("Hungry");
-        if (GameManager.hungryTime / GameManager.hungrysetTime <= 80f)
+        if (GameManager.hungryTime >= GameManager.hungrysetTime / 2)
         {
-            //state = DogState.Free;
-            anim.SetTrigger("Idle");
+            state = puppyState.Hungry;
+            anim.SetTrigger("Hungry");
         }
     }
+    void HungryStep()
+    {
+        if(GameManager.hungryTime <= GameManager.hungrysetTime / 4)
+        {
+            BarkSound();
+            state = puppyState.Hungry;
+            anim.SetTrigger("Hungry");
+        }
+    }
+
+    public void BarkSound()
+    {
+        dogBark.PlayOneShot(dogSound);
+    }
+
 }
 

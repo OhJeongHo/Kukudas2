@@ -33,6 +33,7 @@ public class FurnitureEditor : MonoBehaviour
                 if(hit.transform.tag == "Furniture")
                 {
                     //선택한 오브젝트를 레이가 클릭하고 있는 게임오브젝트로 한다.
+                    print(gameObject.name);
                     selectobj = hit.transform.gameObject;
                 }
             }
