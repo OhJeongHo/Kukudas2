@@ -64,6 +64,7 @@ public class DogMove : MonoBehaviour
         currTime = setTime;
     }
     
+
     // Update is called once per frame
     void Update()
     {
@@ -151,7 +152,7 @@ public class DogMove : MonoBehaviour
                         balls.transform.forward = dir;
 
                         rb = balls.gameObject.GetComponent<Rigidbody>();
-                        rb.AddForce(balls.transform.forward * 1000);
+                        rb.AddForce(balls.transform.forward * 600);
 
                         // 강아지 state를 프리스비로 변경
                         state = DogState.Frisbee;
@@ -222,7 +223,7 @@ public class DogMove : MonoBehaviour
         // Vector3 dir = player.position - gameObject.transform.position;
         transform.forward = dir;
         dir.Normalize();
-        transform.position += dir * 1 * Time.deltaTime;
+        transform.position += dir * 1.5f * Time.deltaTime;
         ToiletStep();
         HungryStep();
         if (Vector3.Distance(player.position, transform.position) <= stopDistance)
@@ -234,18 +235,29 @@ public class DogMove : MonoBehaviour
 
     public void OnClickFree()
     {
+        if (state == DogState.Hungry)
+        {
+            return;
+        }
         state = DogState.Free;
         anim.SetTrigger("Free");
     }
     public void OnClickIdle()
     {
+        if (state == DogState.Hungry)
+        {
+            return;
+        }
         state = DogState.Idle;
         anim.SetTrigger("Idle");
     }
 
     public void OnClickFollow()
     {
-        
+        if (state == DogState.Hungry)
+        {
+            return;
+        }
         state = DogState.Follow;
         anim.SetTrigger("Follow");
         
@@ -264,6 +276,10 @@ public class DogMove : MonoBehaviour
 
     void Frisbee()
     {
+        if (state == DogState.Hungry)
+        {
+            return;
+        }
         Vector3 dir = new Vector3(shotball.transform.position.x - gameObject.transform.position.x, 0, shotball.transform.position.z - gameObject.transform.position.z);
         dir.Normalize();
         gameObject.transform.forward = dir;
@@ -287,6 +303,10 @@ public class DogMove : MonoBehaviour
     }
     public void OnClickFrisbee()
     {
+        if (state == DogState.Hungry)
+        {
+            return;
+        }
         frisbee = true;
     }
     void DetectedGround(Vector3 hitPos)

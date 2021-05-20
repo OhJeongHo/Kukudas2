@@ -14,10 +14,10 @@ public class GameManager : MonoBehaviour
     public Text status;
 
     public static float toiletsetTime = 60f;
-    public static float hungrysetTime = 180f;
+    public static float hungrysetTime = 140f;
     public static float activitySet = 50f;
     public static float toiletTime;
-    public static float hungryTime = 180;
+    public static float hungryTime = 140;
     public static float activity;
     public static int loyalty;
     public static float cleansetTime = 360f;
