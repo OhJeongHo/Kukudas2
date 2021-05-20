@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PuppyMove : MonoBehaviour
 {
@@ -27,6 +29,12 @@ public class PuppyMove : MonoBehaviour
     //똥
     public GameObject poop;
     Transform shitmanager;
+
+    //텍스트
+    public GameObject content;
+    public GameObject infoText;
+
+
 
     public enum puppyState
     {
@@ -57,6 +65,7 @@ public class PuppyMove : MonoBehaviour
         //playerB = GameObject.Find("PlayerB").transform;
         anim = GetComponentInChildren<Animator>();
         shitmanager = GetComponentInChildren<ShitManager>().transform;
+
     }
 
     void Update()
@@ -102,7 +111,7 @@ public class PuppyMove : MonoBehaviour
             case puppyState.Hungry:
                 Hungry();
                 break;
-                  
+
 
 
             default:
@@ -137,6 +146,7 @@ public class PuppyMove : MonoBehaviour
         //강아지와 AR Camera(플레이어)의 y값을 맞춰라
         Vector3 pos = playerB.position;
         pos.y = transform.position.y;
+
         if (Vector3.Distance(transform.position, pos) <= sitDistance)
         {
             //앉음으로 전환
@@ -161,6 +171,7 @@ public class PuppyMove : MonoBehaviour
             print("상태 전환 : Move");
             //anim.SetTrigger("Move");
         }
+        ToiletStep();
     }
 
     void Lick()
@@ -171,7 +182,7 @@ public class PuppyMove : MonoBehaviour
             anim.SetTrigger("Move");
             state = puppyState.Move;
         }
-
+        ToiletStep();
         //yield return new WaitForSeconds(1);
 
 
@@ -213,6 +224,7 @@ public class PuppyMove : MonoBehaviour
 
     public void Sit()
     {
+        ToiletStep();
         //if (Vector3.Distance(transform.position, playerB.position) < sitDistance)
         //{
         //    Lick();
@@ -242,9 +254,8 @@ public class PuppyMove : MonoBehaviour
 
         //transform.eulerAngles = new Vector3(0, Camera.main.transform.eulerAngles.y, 0);
         //강아지의 정면 방향을 originPos로 돌려야 한다.
-        
-        moveDist -= moveSpeed * Time.deltaTime;
 
+        moveDist -= moveSpeed * Time.deltaTime;
         if (moveDist <= 0)
 
         //if (Vector3.Distance(originPos, transform.position) < 0.1f)
@@ -252,17 +263,21 @@ public class PuppyMove : MonoBehaviour
             //state = puppyState.Idle;
             transform.position = originPos;
             moveDist -= moveSpeed * Time.deltaTime;
-            
-            
+
+
             print("상태 전환 : Return -> Idle");
             anim.SetTrigger("Idle");
+
+
         }
+        ToiletStep();
     }
 
     void Follow()
     {
         state = puppyState.Move;
         anim.SetTrigger("Move");
+        ToiletStep();
     }
 
     void Wait()
@@ -271,12 +286,14 @@ public class PuppyMove : MonoBehaviour
         //버튼을 누르면 기다리는 상태로 만든다.
         print("상태 전환 : Wait");
         //state = puppyState.Wait;
+        ToiletStep();
     }
 
     void Shotted()
     {
         anim.SetTrigger("Shotted");
         print("상태 전환 : Shotted : 으악!");
+        ToiletStep();
     }
 
     float moveDist;
@@ -324,14 +341,20 @@ public class PuppyMove : MonoBehaviour
     {
         GameObject poo = Instantiate(poop);
         poo.transform.position = shitmanager.transform.position;
-        Invoke("ToiletReset", 2f);
-
-       
+        //text.transform.parent = content.transform;
+        //text.GetComponent<Text>().text = "강아지가 볼일을 봤습니다. 배설물을 치우세요!";
+        //Invoke("ToiletReset", 2f);
+        ToiletReset();
     }
+
+
     void ToiletReset()
     {
         GameManager.toiletTime = 0;
+        state = puppyState.Idle;
     }
+
+
     void Hungry()
     {
         state = puppyState.Hungry;
@@ -342,7 +365,5 @@ public class PuppyMove : MonoBehaviour
             anim.SetTrigger("Idle");
         }
     }
-
-
 }
 

@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/KSH/01. Scenes/MainHouseScene.unity
     guid: f692eee4a320afd459fc5b68a0998009
+  - enabled: 0
+    path: Assets/KSH/01. Scenes/HouseEditorScene.unity
+    guid: bf97deef50baf744ea3e9a8b73d8dc80
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: cfd3ac514f97e5b439ae961ce91c7a7b, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 5acc0972e38ad77488aeea2a3208bac5, type: 2}
