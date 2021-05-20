@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public static float activity;
     public static int loyalty;
     public static float cleansetTime = 360f;
-    public static float cleanTime = 360;
+    public static float cleanTime = 360f;
 
     void Awake()
     {
