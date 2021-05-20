@@ -34,6 +34,9 @@ public class PuppyMove : MonoBehaviour
     public GameObject content;
     public GameObject infoText;
 
+    public AudioSource dogBark;
+    public AudioClip dogSound;
+
 
 
     public enum puppyState
