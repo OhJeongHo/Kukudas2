@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public GameObject hungryUi;
     public GameObject toiletUi;
     public GameObject activityUi;
+    public GameObject cleanUi;
     public Text status;
 
     public static float toiletsetTime = 60f;
@@ -19,7 +20,8 @@ public class GameManager : MonoBehaviour
     public static float hungryTime = 180;
     public static float activity;
     public static int loyalty;
-    
+    public static float cleansetTime = 360f;
+    public static float cleanTime = 360;
 
     void Awake()
     {
@@ -27,11 +29,13 @@ public class GameManager : MonoBehaviour
             instance = this;
     }
 
+
     void Update()
     {
         DogStatus();
         HungryState();
         ToiletState();
+        CleanState();
         ActivityState();
         StatusView();
     }
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
     {
         toiletTime += Time.deltaTime;
         hungryTime -= Time.deltaTime;
+        cleanTime -= Time.deltaTime;
     }
     
     public void Activity(float index)
@@ -69,9 +74,25 @@ public class GameManager : MonoBehaviour
 
     public void ActivityState()
     {
+        if (activityUi == null)
+        {
+            return;
+        }
         Slider slider = activityUi.GetComponent<Slider>();
         slider.value = activity / activitySet;
     }
+
+    public void CleanState()
+    {
+        if (cleanUi == null)
+        {
+            return;
+        }
+        Slider slider = cleanUi.GetComponent<Slider>();
+        slider.value = cleanTime / cleansetTime;
+    }
+
+
     void StatusView()
     {
         status.GetComponent<Text>().text = "Æ÷¸¸°¨ : " + (int)((hungryTime/hungrysetTime)*100) +"%"
