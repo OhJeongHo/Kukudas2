@@ -63,14 +63,15 @@ public class StartScene : MonoBehaviour
         if (currtime >= 0.8)
         {
             alpha2 += Time.deltaTime;
-            title[0].GetComponent<Text>().color = new Color(237/255f, 116/255f, 161/255f, alpha2);
-            title[1].GetComponent<Text>().color = new Color(255/255f, 234/255f, 83/255f, alpha2);
+            title[0].GetComponent<Image>().color = new Color(255 / 255f, 255 / 255f, 255 / 255f, alpha2);
+            //title[0].GetComponent<Text>().color = new Color(237/255f, 116/255f, 161/255f, alpha2);
+            // title[1].GetComponent<Text>().color = new Color(255/255f, 234/255f, 83/255f, alpha2);
         }
         if (currtime >= 1.2)
         {
             alpha3 += Time.deltaTime * dir;
             if (alpha3 <= 0 || alpha3 >= 1) dir *= -1;
-            title[2].GetComponent<Text>().color = new Color(1, 1, 1, alpha3);
+            title[1].GetComponent<Text>().color = new Color(1, 1, 1, alpha3);
         }
     }
 }
