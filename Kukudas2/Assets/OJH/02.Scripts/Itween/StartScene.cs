@@ -10,14 +10,16 @@ public class StartScene : MonoBehaviour
     public GameObject[] cloud;
     public GameObject[] title;
     public GameObject[] end;
-    float currtime = 0;
-    float alpha1 = 0;
-    float alpha2 = 0;
-    float alpha3 = 0;
-    float dir = 1;
+    float currtime = 0.0f;
+    float alpha1 = 0.0f;
+    float alpha2 = 0.0f;
+    float alpha3 = 0.0f;
+    float dir = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
+        // 강아지 이미지 등장
         iTween.MoveBy(pet[0], iTween.Hash( "y", 400, "time", 0.3, "easetype", iTween.EaseType.easeOutBack,
             "oncompletetarget", pet[1]));
         iTween.MoveBy(pet[1], iTween.Hash("delay", 0.3, "y", 500, "time", 0.3, "easetype", iTween.EaseType.easeOutBack,
@@ -28,17 +30,20 @@ public class StartScene : MonoBehaviour
 
     void OnCompleteAni()
     {
-        print("실행");
-        cloud[0].SetActive(true);
-        cloud[1].SetActive(true);
-        cloud[2].SetActive(true);
-        cloud[3].SetActive(true);
+        for (int i = 0; i < cloud.Length; i++)
+        {
+            cloud[i].SetActive(true);
+        }
     }
+
     // Update is called once per frame
     void Update()
     {
         currtime += Time.deltaTime;
+
         Cloud();
+
+        // 화면을 터치할 때 - 구름이 화면을 덮고 2초후 씬 전환
         if (Input.GetMouseButtonDown(0))
         {
             iTween.MoveBy(end[0], iTween.Hash("x", 1677, "time", 2));
@@ -46,26 +51,27 @@ public class StartScene : MonoBehaviour
             Invoke("Next", 2);
         }
     }
+
     void Next()
     {
         SceneManager.LoadScene("SelectScene");
     }
+
+    // 배경 이미지들 각각 등장, 글자 깜빡임
     void Cloud()
     {
-        if (currtime >= 0.6)
+        if (currtime >= 0.6 && currtime < 2)
         {
             alpha1 += Time.deltaTime;
-            cloud[0].GetComponent<Image>().color = new Color(1, 1, 1, alpha1);
-            cloud[1].GetComponent<Image>().color = new Color(1, 1, 1, alpha1);
-            cloud[2].GetComponent<Image>().color = new Color(1, 1, 1, alpha1);
-            cloud[3].GetComponent<Image>().color = new Color(1, 1, 1, alpha1);
+            for (int i = 0; i < cloud.Length; i++)
+            {
+                cloud[i].GetComponent<Image>().color = new Color(1, 1, 1, alpha1);
+            }
         }
-        if (currtime >= 0.8)
+        if (currtime >= 0.8 && currtime < 2)
         {
             alpha2 += Time.deltaTime;
             title[0].GetComponent<Image>().color = new Color(255 / 255f, 255 / 255f, 255 / 255f, alpha2);
-            //title[0].GetComponent<Text>().color = new Color(237/255f, 116/255f, 161/255f, alpha2);
-            // title[1].GetComponent<Text>().color = new Color(255/255f, 234/255f, 83/255f, alpha2);
         }
         if (currtime >= 1.2)
         {
